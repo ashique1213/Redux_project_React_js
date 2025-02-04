@@ -11,6 +11,9 @@ const Navbar = () => {
         <Link to={"/profile"}>
         <h1 className="cursor-pointer hover:text-gray-300 transition">Profile</h1>
         </Link>
+        <Link to={""}>
+        <h1 className="cursor-pointer hover:text-gray-300 transition">ADD-NewUser</h1>
+        </Link>
         <Link to={"/login"}>
         <h1 className="cursor-pointer hover:text-gray-300 transition">Login</h1>
         </Link>
