@@ -7,21 +7,27 @@ const API_URL = 'http://127.0.0.1:8000/api/signup/';
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
+    userName: null,
+    userEmail: null,
     error: null,
   },
   reducers: {
-    signupSuccess: (state, action) => {
-      state.user = action.payload.user;
+      signupSuccess: (state, action) => {
+      state.userName = action.payload.username;
+      state.userEmail = action.payload.email;
       state.error = null;
     },
     signupFailure: (state, action) => {
       state.error = action.payload.error;
     },
+    signOut: (state, action) => {
+        state.userName = null;
+        state.userEmail = null;
+    },
   },
 });
 
-export const { signupSuccess, signupFailure } = authSlice.actions;
+export const { signupSuccess, signupFailure ,signOut } = authSlice.actions;
 
 export const signupUser = (username, email, password, password2) => async (dispatch) => {
   try {

@@ -1,43 +1,44 @@
-import React, { useState } from "react";
-import axios from 'axios'; // axios for API calls
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import { useNavigate } from "react-router-dom"; 
+import { useDispatch } from "react-redux";
+import { signupSuccess } from "../redux/authSlice";
 
-const SignUp = () => {
+const Signup = () => {
+    const dispatch = useDispatch()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    password2: "",
   });
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const user = localStorage.getItem("token");
+    if (user) {
+      navigate("/"); 
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (formData.password === formData.confirmPassword) {
-      try {
-        const response = await axios.post('http://127.0.0.1:8000/api/signup/',  {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        });
-
-        console.log("User created successfully:", response.data);
-        navigate('/login');
-      } catch (error) {
-        console.error("Error creating user:", error.response.data);
-      }
-    } else {
-      console.log("Passwords do not match");
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/signup/", formData);
+        localStorage.setItem("token", response.data.token); 
+        dispatch(signupSuccess(response.data.user))
+        navigate("/"); 
+    } catch (error) {
+      setError(error.response?.data?.detail || "An error occurred");
     }
   };
 
@@ -49,6 +50,7 @@ const SignUp = () => {
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
             Sign Up
           </h2>
+          {error && <p className="text-red-500 text-center">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
               <label htmlFor="username" className="text-gray-600">
@@ -96,14 +98,14 @@ const SignUp = () => {
               />
             </div>
             <div className="relative">
-              <label htmlFor="confirmPassword" className="text-gray-600">
+              <label htmlFor="password2" className="text-gray-600">
                 Confirm Password
               </label>
               <input
                 type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                id="password2"
+                name="password2"
+                value={formData.password2}
                 onChange={handleChange}
                 className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Confirm your password"
@@ -121,6 +123,15 @@ const SignUp = () => {
               </button>
             </div>
           </form>
+
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-950">
+                Login
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
       <Footer />
@@ -128,4 +139,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Signup;

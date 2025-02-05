@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { signupSuccess } from "../redux/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const user = localStorage.getItem("token");
+    if (user) {
+      navigate("/"); 
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,14 +28,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
-  
-    console.log(formData); 
-  
+    setError("");
+
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/login/", formData);
       localStorage.setItem("token", response.data.token); 
-      navigate("/"); 
+      dispatch(signupSuccess(response.data.user))
+      navigate("/");  
     } catch (error) {
       setError(error.response?.data?.error || "Login failed");
     }

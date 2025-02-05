@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "../redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -22,6 +25,7 @@ const Navbar = () => {
     localStorage.removeItem("user");
     setIsAuthenticated(false);
     setIsAdmin(false);
+    dispatch(signOut())
     navigate("/login");
   };
 
