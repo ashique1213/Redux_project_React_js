@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from .serializer import UserSignupSerializer
 
 
 @api_view(['POST'])
@@ -24,7 +25,10 @@ def UserSignupView(request):
 
         # Create the user
         user = User.objects.create_user(username=username, email=email, password=password)
-        return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
+
+        user_data = UserSignupSerializer(user).data
+        token = Token.objects.get_or_create(user=user)
+        return Response({"message": "User created successfully", "token": token.key,"user":user_data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -41,10 +45,11 @@ def UserLoginView(request):
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     user = authenticate(username=user.username, password=password)
+    user_data = UserSignupSerializer(user).data
 
     if user is not None:
         token, created = Token.objects.get_or_create(user=user)
-        return Response({"message": "Login successful", "token": token.key}, status=status.HTTP_200_OK)
+        return Response({"message": "Login successful", "token": token.key,"user":user_data}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
