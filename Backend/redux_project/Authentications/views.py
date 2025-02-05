@@ -27,8 +27,9 @@ def UserSignupView(request):
         user = User.objects.create_user(username=username, email=email, password=password)
 
         user_data = UserSignupSerializer(user).data
-        token = Token.objects.get_or_create(user=user)
-        return Response({"message": "User created successfully", "token": token.key,"user":user_data}, status=status.HTTP_201_CREATED)
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({"message": "User created successfully", "token": token.key,  "user": user_data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
