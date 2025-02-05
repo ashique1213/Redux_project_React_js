@@ -1,34 +1,43 @@
 import React, { useState } from "react";
+import axios from 'axios'; // axios for API calls
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom"; 
 
-const Login = () => {
-  const navigate = useNavigate();
+const SignUp = () => {
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
-
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
-  
-    console.log(formData); 
-  
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login/", formData);
-      localStorage.setItem("token", response.data.token); 
-      navigate("/"); 
-    } catch (error) {
-      setError(error.response?.data?.error || "Login failed");
+
+    if (formData.password === formData.confirmPassword) {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/api/signup/',  {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        });
+
+        console.log("User created successfully:", response.data);
+        navigate('/login');
+      } catch (error) {
+        console.error("Error creating user:", error.response.data);
+      }
+    } else {
+      console.log("Passwords do not match");
     }
   };
 
@@ -38,10 +47,24 @@ const Login = () => {
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="w-full max-w-md bg-white shadow-lg rounded-3xl p-8">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-            Login
+            Sign Up
           </h2>
-          {error && <p className="text-red-500 text-center">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <label htmlFor="username" className="text-gray-600">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Enter your username"
+                required
+              />
+            </div>
             <div className="relative">
               <label htmlFor="email" className="text-gray-600">
                 Email
@@ -72,6 +95,21 @@ const Login = () => {
                 required
               />
             </div>
+            <div className="relative">
+              <label htmlFor="confirmPassword" className="text-gray-600">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Confirm your password"
+                required
+              />
+            </div>
 
             {/* Submit Button */}
             <div className="mt-6">
@@ -79,19 +117,10 @@ const Login = () => {
                 type="submit"
                 className="w-full p-3 bg-[#0A1931] text-white font-semibold rounded-md shadow-md hover:bg-blue-950 transition"
               >
-                Login
+                Sign Up
               </button>
             </div>
           </form>
-
-          <div className="mt-4 text-center">
-            <p className="text-gray-600">
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-blue-950">
-                Sign Up
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
       <Footer />
@@ -99,4 +128,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

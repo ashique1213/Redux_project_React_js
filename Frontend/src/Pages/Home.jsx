@@ -10,9 +10,6 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <AddNewUser/>
-      <Search />
-      <Users />
       <Header />
       <Footer/>
     </div>

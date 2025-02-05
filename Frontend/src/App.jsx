@@ -1,20 +1,29 @@
-import Home from './Pages/Home'
-import { BrowserRouter as Router,Routes,Route } from 'react-router-dom'
-import Profile from './Pages/Profile'
-import Login from './Pages/Login'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './redux/store';
+import Home from './Pages/Home';
+import Profile from './Pages/Profile';
+import Login from './Pages/Login';
+import SignUp from './Pages/Signup';
+import AdminHome from './Pages/AdminHome';
+import AddNewUser from './Pages/AddNewUser';
 
 const App = () => {
   return (
-    <div>
-      <Router>
+    <Provider store={store}> {/* Wrap the app with Redux Provider */}
+      <Router> {/* Enable routing */}
         <Routes>
-          <Route path="/" element={ <Home/> } />
-          <Route path="/login" element={ <Login/> } />
-          <Route path="/profile" element={ <Profile/> } />
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/adminhome" element={<AdminHome />} />
+          <Route path="/addnewuser" element={<AddNewUser />} />
         </Routes>
       </Router>
-    </div>
-  )
-}
+    </Provider>
+  );
+};
 
-export default App
+export default App;
