@@ -6,7 +6,7 @@ const Search = ({ onSearch }) => {
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    onSearch(value); // Pass search query to parent
+    onSearch(value); 
   };
 
   return (

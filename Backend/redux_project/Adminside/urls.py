@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import UserListView
+from .views import UserListView,AdminAddUserView
 
 urlpatterns = [
-    path('users/', UserListView.as_view(), name='users'),  # Using the class-based view
+    path('users/', UserListView, name='users'),  
+    path('add-user/', AdminAddUserView, name='admin_add_user'),
 ]

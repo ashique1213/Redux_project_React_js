@@ -6,12 +6,17 @@ from .models import CustomUser
 from .serializer import UserSignupSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 import re
-
+from datetime import timedelta
 
 
 def get_access_token_for_user(user):
     refresh = RefreshToken.for_user(user)
+    refresh.access_token.set_exp(lifetime=timedelta(minutes=30))  
     return str(refresh.access_token)
+
+# def get_access_token_for_user(user):
+#     refresh = RefreshToken.for_user(user)
+#     return str(refresh.access_token)
 
 
 @api_view(['POST'])

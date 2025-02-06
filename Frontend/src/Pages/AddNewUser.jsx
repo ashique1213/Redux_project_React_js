@@ -1,34 +1,75 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 
 const AddNewUser = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    password2: "",
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
     if (!isAdmin) {
-      navigate("/");
+      navigate("/"); // Redirect non-admin users
     }
   }, [navigate]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+  
+    if (formData.password !== formData.password2) {
+      setError("Passwords do not match");
+      return;
+    }
+  
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/adminside/add-user/", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setSuccess(response.data.message);
+      setFormData({ username: "", email: "", password: "", password2: "" });
+      navigate("/adminhome");  // Example: redirect to user list
+    } catch (error) {
+      setError(error.response?.data?.error || "An error occurred");
+    }
+  };
+  
 
   return (
     <>
       <Navbar />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="bg-white shadow-lg rounded-2xl p-9 w-full max-w-2xl">
-          <h2 className="text-3xl font-semibold text-center mb-6">
+          <h2 className="text-2xl font-semibold text-center mb-6">
             Add New User
           </h2>
-          <form className="space-y-6">
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          {success && <p className="text-green-500 text-center">{success}</p>}
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-gray-700 font-medium">Full Name</label>
+              <label className="block text-gray-700 font-medium">Username</label>
               <input
                 type="text"
-                name="name"
-                placeholder="Enter full name"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />
             </div>
@@ -37,8 +78,9 @@ const AddNewUser = () => {
               <input
                 type="email"
                 name="email"
-                placeholder="Enter email"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />
             </div>
@@ -47,14 +89,26 @@ const AddNewUser = () => {
               <input
                 type="password"
                 name="password"
-                placeholder="Enter password"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium">Confirm Password</label>
+              <input
+                type="password"
+                name="password2"
+                value={formData.password2}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-950 text-white py-3 rounded-lg hover:bg-blue-900 transition"
+              className="w-full bg-blue-950 text-white py-3 rounded-lg hover:bg-blue-900"
             >
               Add User
             </button>
