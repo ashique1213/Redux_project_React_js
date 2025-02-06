@@ -1,11 +1,6 @@
 import React from "react";
 
-const Users = () => {
-  const userData = [
-    { id: 1, username: "JohnDoe", email: "john@example.com" },
-    { id: 2, username: "JaneSmith", email: "jane@example.com" },
-  ];
-
+const Users = ({ userData }) => {
   return (
     <div className="users flex justify-center">
       <div className="overflow-x-auto mt-10 mb-10 p-5 max-w-[1000px] w-full rounded-lg bg-gray-200">
@@ -20,23 +15,31 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {userData.map((user) => (
-              <tr key={user.id} className="border-t font-bold">
-                <td className="p-2">{user.id}</td>
-                <td className="p-2">{user.username}</td>
-                <td className="p-2">{user.email}</td>
-                <td className="p-2">
-                  <button className="bg-blue-950 text-white px-3 py-1 rounded">
-                    Edit
-                  </button>
-                </td>
-                <td className="p-2">
-                  <button className="bg-red-900 text-white px-3 py-1 rounded">
-                    Delete
-                  </button>
+            {userData.length > 0 ? (
+              userData.map((user) => (
+                <tr key={user.id} className="border-t font-bold">
+                  <td className="p-2">{user.id}</td>
+                  <td className="p-2">{user.username}</td>
+                  <td className="p-2">{user.email}</td>
+                  <td className="p-2">
+                    <button className="bg-blue-950 text-white px-3 py-1 rounded">
+                      Edit
+                    </button>
+                  </td>
+                  <td className="p-2">
+                    <button className="bg-red-900 text-white px-3 py-1 rounded">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center p-4">
+                  No users found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

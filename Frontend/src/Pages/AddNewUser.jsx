@@ -1,8 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 
 const AddNewUser = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    if (!isAdmin) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   return (
     <>
+      <Navbar />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="bg-white shadow-lg rounded-2xl p-9 w-full max-w-2xl">
           <h2 className="text-3xl font-semibold text-center mb-6">
@@ -48,6 +61,7 @@ const AddNewUser = () => {
           </form>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
     'corsheaders',
-    'Authentications',
     'rest_framework.authtoken',
+    'Authentications',
+    'Adminside'
 ]
 
 MIDDLEWARE = [

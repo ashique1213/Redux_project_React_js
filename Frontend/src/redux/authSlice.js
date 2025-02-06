@@ -15,8 +15,8 @@ export const authSlice = createSlice({
   reducers: {
       signupSuccess: (state, action) => {
       state.userName = action.payload.username;
-        state.userEmail = action.payload.email;
-          state.is_admin = action.payload.is_admin;  
+      state.userEmail = action.payload.email;
+      state.is_admin = action.payload.is_admin;  
       state.error = null;
     },
     signupFailure: (state, action) => {

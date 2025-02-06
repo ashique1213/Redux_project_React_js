@@ -11,19 +11,20 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const adminStatus = localStorage.getItem("isAdmin");
+
     if (token) {
       setIsAuthenticated(true);
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user.isAdmin) {
+      if (adminStatus === "true") {
         setIsAdmin(true);
       }
     }
   }, []);
 
   const handleLogout = () => {
-    // localStorage.removeItem("token");
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("user"); 
+    localStorage.removeItem("isAdmin");
     setIsAuthenticated(false);
     setIsAdmin(false);
     dispatch(signOut())
@@ -38,12 +39,18 @@ const Navbar = () => {
       <div className="flex space-x-6">
         {isAuthenticated ? (
           <>
-            <Link to="/profile">
-              <h1 className="cursor-pointer hover:text-gray-300 transition">Profile</h1>
-            </Link>
-            {isAdmin && (
-              <Link to="/adminhome">
-                <h1 className="cursor-pointer hover:text-gray-300 transition">Admin Home</h1>
+            {isAdmin ? (
+              <>
+                <Link to="/adminhome">
+                  <h1 className="text-md font-extrabold cursor-pointer hover:text-gray-300 transition">Users</h1>
+                </Link>
+                <Link to="/addnewuser">
+                  <h1 className="text-md font-extrabold cursor-pointer hover:text-gray-300 transition">NewUser</h1>
+                </Link>
+              </>
+            ) : (
+              <Link to="/profile">
+                <h1 className="cursor-pointer hover:text-gray-300 transition">Profile</h1>
               </Link>
             )}
             <button
@@ -64,3 +71,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
