@@ -53,70 +53,71 @@ const AddNewUser = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="bg-white shadow-lg rounded-2xl p-9 w-full max-w-2xl">
-          <h2 className="text-2xl font-semibold text-center mb-6">
-            Add New User
-          </h2>
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          {success && <p className="text-green-500 text-center">{success}</p>}
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-gray-700 font-medium">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium">Confirm Password</label>
-              <input
-                type="password"
-                name="password2"
-                value={formData.password2}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-950 text-white py-3 rounded-lg hover:bg-blue-900"
-            >
-              Add User
-            </button>
-          </form>
-        </div>
+    <Navbar />
+    <div className="flex justify-center items-center p-8 bg-gray-100">
+      <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-xl">
+        <h2 className="text-xl font-semibold text-center mb-4">
+          Add New User
+        </h2>
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">{success}</p>}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-gray-700 font-medium">Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Confirm Password</label>
+            <input
+              type="password"
+              name="password2"
+              value={formData.password2}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-950 text-white py-2 rounded-lg hover:bg-blue-900"
+          >
+            Add User
+          </button>
+        </form>
       </div>
-      <Footer />
-    </>
+    </div>
+    <Footer />
+  </>
+  
   );
 };
 
