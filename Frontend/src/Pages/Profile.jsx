@@ -1,7 +1,9 @@
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
+  const {userName, userEmail} = useSelector((state) => state.auth)
   return (
     <>
       <Navbar />
@@ -14,8 +16,8 @@ const Profile = () => {
               className="w-24 h-24 rounded-full border-4 bg-[#0A1931] shadow-md"
             />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mt-4">John Doe</h2>
-          <p className="text-gray-500">johndoe@example.com</p>
+          <h2 className="text-2xl font-bold text-gray-800 mt-4">{userName }</h2>
+          <p className="text-gray-500">{userEmail }</p>
           <div className="mt-6">
             <button className="bg-[#0A1931] text-white px-5 py-2 rounded-full shadow-lg hover:bg-blue-950 transition">
               Edit Profile

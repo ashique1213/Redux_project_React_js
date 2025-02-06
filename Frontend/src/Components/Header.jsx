@@ -12,7 +12,7 @@ const Header = () => {
           <h1 className="text-white text-7xl md:text-8xl font-extrabold tracking-wide drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
             REDUX
           </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-300 font-medium">
+          <p className="mt-4 text-lg md:text-xl text-gray-300 font-medium capitalize">
             {userName ? `Welcome ${userName}` : ' '}
           </p>
 

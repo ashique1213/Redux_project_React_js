@@ -1,35 +1,58 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
+from .models import CustomUser 
 from .serializer import UserSignupSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+import re
+
+
+
+def get_access_token_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return str(refresh.access_token)
 
 
 @api_view(['POST'])
 def UserSignupView(request):
-    if request.method == 'POST':
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
+    password2 = request.data.get('password2')
 
-        if not username or not email or not password:
-            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+    # Validation
+    if not username or not email or not password or not password2:
+        return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if User.objects.filter(username=username).exists():
-            return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    if password != password2:
+        return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if User.objects.filter(email=email).exists():
-            return Response({"error": "Email already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    if CustomUser.objects.filter(username=username).exists():
+        return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create the user
-        user = User.objects.create_user(username=username, email=email, password=password)
+    if CustomUser.objects.filter(email=email).exists():
+        return Response({"error": "Email already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user_data = UserSignupSerializer(user).data
-        token, created = Token.objects.get_or_create(user=user)
+    email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    if not re.match(email_regex, email):
+        return Response({"error": "Invalid email format"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"message": "User created successfully", "token": token.key,  "user": user_data}, status=status.HTTP_201_CREATED)
+    
+    user = CustomUser.objects.create_user(
+        username=username,
+        email=email.lower(),
+        password=password,
+    )
+
+    tokens = get_access_token_for_user(user)
+    user_data = UserSignupSerializer(user).data
+
+    return Response({
+        "message": "User created successfully",
+        "token": tokens,
+        "user": user_data
+    }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -40,17 +63,27 @@ def UserLoginView(request):
     if not email or not password:
         return Response({"error": "Both fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+    email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    if not re.match(email_regex, email):
+        return Response({"error": "Invalid email format"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    email = email.lower()
     try:
-        user = User.objects.get(email=email)  
-    except User.DoesNotExist:
+        user = CustomUser.objects.get(email=email)  
+        print(user)
+    except CustomUser.DoesNotExist:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     user = authenticate(username=user.username, password=password)
-    user_data = UserSignupSerializer(user).data
-
-    if user is not None:
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({"message": "Login successful", "token": token.key,"user":user_data}, status=status.HTTP_200_OK)
-    else:
+    if user is None:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    tokens = get_access_token_for_user(user)
+    user_data = UserSignupSerializer(user).data
+
+    return Response({
+        "message": "Login successful",
+        "token": tokens,
+        "user": user_data,
+        "is_admin": user.is_staff
+    }, status=status.HTTP_200_OK)

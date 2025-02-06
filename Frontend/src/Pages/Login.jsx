@@ -29,16 +29,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/login/", formData);
-      localStorage.setItem("token", response.data.token); 
-      dispatch(signupSuccess(response.data.user))
-      navigate("/");  
+      localStorage.setItem("token", response.data.token);
+      dispatch(signupSuccess(response.data.user));
+  
+      if (response.data.is_admin) {
+        navigate("/adminhome"); 
+      } else {
+        navigate("/");
+      }
+  
     } catch (error) {
       setError(error.response?.data?.error || "Login failed");
     }
   };
+  
 
   return (
     <>
