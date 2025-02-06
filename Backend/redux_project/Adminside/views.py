@@ -41,3 +41,16 @@ def AdminAddUserView(request):
         }
     }, status=status.HTTP_201_CREATED)
 
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def AdminDeleteUserView(request, user_id):
+    print("jo")
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        user.delete()
+        return Response({"message": "User deleted successfully"}, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
