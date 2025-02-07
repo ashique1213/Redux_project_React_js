@@ -21,17 +21,16 @@ def UserSignupView(request):
     password = request.data.get('password')
     password2 = request.data.get('password2')
 
-    # Validation
     if not username or not email or not password or not password2:
         return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
     if password != password2:
         return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if CustomUser.objects.filter(username=username).exists():
+    if CustomUser.objects.filter(username__iexact=username).exists():
         return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if CustomUser.objects.filter(email=email).exists():
+    if CustomUser.objects.filter(email__iexact=email).exists():
         return Response({"error": "Email already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
     email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
@@ -61,22 +60,21 @@ def UserLoginView(request):
     password = request.data.get('password')
 
     if not email or not password:
-        return Response({"error": "Both fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Both email and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
     email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
     if not re.match(email_regex, email):
-        return Response({"error": "Invalid email format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid email format. Please enter a valid email address."}, status=status.HTTP_400_BAD_REQUEST)
     
     email = email.lower()
     try:
         user = CustomUser.objects.get(email=email)  
-        print(user)
     except CustomUser.DoesNotExist:
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"error": "No account found with this email address."}, status=status.HTTP_401_UNAUTHORIZED)
 
     user = authenticate(username=user.username, password=password)
     if user is None:
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"error": "Incorrect password. Please try again."}, status=status.HTTP_401_UNAUTHORIZED)
 
     tokens = get_access_token_for_user(user)
     user_data = UserSignupSerializer(user).data

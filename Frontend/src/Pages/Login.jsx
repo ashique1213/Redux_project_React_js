@@ -5,9 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { signupSuccess } from "../redux/authSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -18,7 +20,7 @@ const Login = () => {
   useEffect(() => {
     const user = localStorage.getItem("token");
     if (user) {
-      navigate("/"); 
+      navigate("/");
     }
   }, [navigate]);
 
@@ -29,87 +31,86 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/login/", formData);
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("isAdmin", response.data.is_admin); 
-  
+      localStorage.setItem("isAdmin", response.data.is_admin);
+
       dispatch(signupSuccess(response.data.user));
-  
-      if (response.data.is_admin) {
-        navigate("/adminhome");
-      } else {
-        navigate("/");
-      }
-  
+
+      toast.success("Login successful!", { position: "top-right", autoClose: 2000 });
+
+      setTimeout(() => {
+        if (response.data.is_admin) {
+          navigate("/adminhome");
+        } else {
+          navigate("/");
+        }
+      }, 2000);
+
     } catch (error) {
       setError(error.response?.data?.error || "Login failed");
+      toast.error(error.response?.data?.error || "Login failed", { position: "top-right", autoClose: 2000 });
     }
   };
-  
 
   return (
     <>
-    <Navbar />
-    <div className="flex justify-center items-center p-16 bg-gray-100">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-3xl p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Login
-        </h2>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <label htmlFor="email" className="text-gray-600">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Enter your email"
-              required
-            />
+      <Navbar />
+      <ToastContainer />
+      <div className="flex justify-center items-center p-16 bg-gray-100 min-h-screen">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-3xl p-8">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <label htmlFor="email" className="text-gray-600">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="password" className="text-gray-600">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full p-3 bg-[#0A1931] text-white font-semibold rounded-md shadow-md hover:bg-blue-950 transition"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-blue-950">Sign Up</Link>
+            </p>
           </div>
-          <div className="relative">
-            <label htmlFor="password" className="text-gray-600">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-  
-          {/* Submit Button */}
-          <div className="mt-6">
-            <button
-              type="submit"
-              className="w-full p-3 bg-[#0A1931] text-white font-semibold rounded-md shadow-md hover:bg-blue-950 transition"
-            >
-              Login
-            </button>
-          </div>
-        </form>
-  
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-950">
-              Sign Up
-            </Link>
-          </p>
         </div>
       </div>
-    </div>
-    <Footer />
-  </>
-  
+      <Footer />
+    </>
   );
 };
 

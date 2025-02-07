@@ -5,9 +5,11 @@ import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { useDispatch } from "react-redux";
 import { signupSuccess } from "../redux/authSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -20,7 +22,7 @@ const Signup = () => {
   useEffect(() => {
     const user = localStorage.getItem("token");
     if (user) {
-      navigate("/"); 
+      navigate("/");
     }
   }, [navigate]);
 
@@ -33,102 +35,115 @@ const Signup = () => {
     setError("");
 
     try {
-        const response = await axios.post("http://127.0.0.1:8000/api/signup/", formData);
-      localStorage.setItem("token", response.data.token); 
-        dispatch(signupSuccess(response.data.user))
-        navigate("/"); 
+      const response = await axios.post("http://127.0.0.1:8000/api/signup/", formData);
+      localStorage.setItem("token", response.data.token);
+      dispatch(signupSuccess(response.data.user));
+
+      toast.success("Account created successfully!");
+
+      setTimeout(() => {
+          navigate("/");
+      }, 2000);
+
+      
     } catch (error) {
-      setError(error.response?.data?.detail || "An error occurred");
+      const errorMessage = error.response?.data?.error || "An error occurred";
+      setError(errorMessage);
+
+      toast.error(errorMessage);
     }
   };
 
   return (
     <>
-    <Navbar />
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-3xl p-6">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Sign Up
-        </h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <label htmlFor="username" className="text-gray-600">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Enter your username"
-              required
-            />
+      <Navbar />
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-3xl p-6">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            Sign Up
+          </h2>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <label htmlFor="username" className="text-gray-600">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Enter your username"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="email" className="text-gray-600">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="password" className="text-gray-600">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="password2" className="text-gray-600">Confirm Password</label>
+              <input
+                type="password"
+                id="password2"
+                name="password2"
+                value={formData.password2}
+                onChange={handleChange}
+                className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                placeholder="Confirm your password"
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="mt-4">
+              <button
+                type="submit"
+                className="w-full p-2 bg-[#0A1931] text-white font-semibold rounded-md shadow-md hover:bg-blue-950 transition"
+              >
+                Sign Up
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-950">
+                Login
+              </Link>
+            </p>
           </div>
-          <div className="relative">
-            <label htmlFor="email" className="text-gray-600">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          <div className="relative">
-            <label htmlFor="password" className="text-gray-600">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-          <div className="relative">
-            <label htmlFor="password2" className="text-gray-600">Confirm Password</label>
-            <input
-              type="password"
-              id="password2"
-              name="password2"
-              value={formData.password2}
-              onChange={handleChange}
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Confirm your password"
-              required
-            />
-          </div>
-  
-          {/* Submit Button */}
-          <div className="mt-4">
-            <button
-              type="submit"
-              className="w-full p-2 bg-[#0A1931] text-white font-semibold rounded-md shadow-md hover:bg-blue-950 transition"
-            >
-              Sign Up
-            </button>
-          </div>
-        </form>
-  
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-950">
-              Login
-            </Link>
-          </p>
         </div>
       </div>
-    </div>
-    <Footer />
-  </>
-  
+
+      <Footer />
+
+      {/* Add ToastContainer to display the notifications */}
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
+    </>
   );
 };
 

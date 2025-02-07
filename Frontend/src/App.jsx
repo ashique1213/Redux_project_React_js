@@ -10,6 +10,8 @@ import SignUp from './Pages/Signup';
 import AdminHome from './Pages/AdminHome';
 import AddNewUser from './Pages/AddNewUser';
 import EditUser from './Pages/EditUser';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => {
   return (

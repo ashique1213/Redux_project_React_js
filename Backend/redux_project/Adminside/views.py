@@ -26,10 +26,10 @@ def AdminAddUserView(request):
     if password != password2:
         return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if CustomUser.objects.filter(username=username).exists():
+    if CustomUser.objects.filter(username__iexact=username).exists():
         return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if CustomUser.objects.filter(email=email).exists():
+    if CustomUser.objects.filter(email__iexact=email).exists():
         return Response({"error": "Email already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
     user = CustomUser.objects.create_user(username=username, email=email, password=password)
@@ -55,7 +55,6 @@ def AdminDeleteUserView(request, user_id):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def AdminEditUserView(request, user_id):
@@ -66,8 +65,17 @@ def AdminEditUserView(request, user_id):
             return Response({"id": user.id, "username": user.username, "email": user.email})
 
         if request.method == 'PUT':
-            user.username = request.data.get("username", user.username)
-            user.email = request.data.get("email", user.email)
+            username = request.data.get("username", user.username)
+            email = request.data.get("email", user.email)
+
+            if CustomUser.objects.exclude(id=user.id).filter(username=username).exists():
+                return Response({"error": "Username already in use"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if CustomUser.objects.exclude(id=user.id).filter(email=email).exists():
+                return Response({"error": "Email already in use"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.username = username
+            user.email = email
             user.save()
             return Response({"message": "User updated successfully"}, status=status.HTTP_200_OK)
 
@@ -75,4 +83,5 @@ def AdminEditUserView(request, user_id):
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 

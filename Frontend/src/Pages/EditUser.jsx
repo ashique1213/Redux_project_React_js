@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditUser = () => {
-  const { userId } = useParams(); // Get user ID from URL
+  const { userId } = useParams(); 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: "", email: "" });
 
@@ -21,11 +23,12 @@ const EditUser = () => {
           const data = await response.json();
           setFormData({ username: data.username, email: data.email });
         } else {
-          alert("User not found");
-          navigate("/adminhome"); // Redirect if user not found
+          toast.error("User not found");
+          navigate("/adminhome"); 
         }
       } catch (error) {
         console.error("Error fetching user:", error);
+        toast.error("An error occurred while fetching user details");
       }
     };
     fetchUser();
@@ -48,20 +51,24 @@ const EditUser = () => {
       });
 
       if (response.ok) {
-        alert("User updated successfully");
-        navigate("/adminhome"); // Redirect to user list
+        toast.success("User updated successfully");
+        setTimeout(() => {
+          navigate("/adminhome"); // Redirect after 2 seconds
+        }, 2000);
       } else {
-        alert("Failed to update user");
+        const data = await response.json();
+        toast.error(data.error || "Failed to update user");
       }
     } catch (error) {
       console.error("Error updating user:", error);
+      toast.error("An error occurred while updating the user");
     }
   };
 
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center min-h-screen p-0  bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen p-0 bg-gray-100">
         <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-xl">
           <h2 className="text-xl font-semibold text-center mb-4">Edit User</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -97,6 +104,7 @@ const EditUser = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer /> 
     </>
   );
 };
