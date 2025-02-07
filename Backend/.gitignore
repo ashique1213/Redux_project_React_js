@@ -36,6 +36,7 @@ instance/
 media/
 staticfiles/
 local_settings.py
+profile_images
 
 # VS Code & IDE settings
 .vscode/
