@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
   const { userName, userEmail, userId } = useSelector((state) => state.auth); 
@@ -62,11 +64,16 @@ const Profile = () => {
 
   const handleSubmitImage = async () => {
     if (!selectedImage) {
-      console.error("No image selected");
+      toast.error("No image selected!", { position: "top-right" });
       return;
     }
 
     const file = fileInputRef.current.files[0];
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Invalid file type! Please upload an image.", { position: "top-right" });
+      return;
+    }
     const formData = new FormData();
     formData.append("profile_image", file);
 
@@ -90,8 +97,9 @@ const Profile = () => {
 
         setProfileImage(newImageUrl); 
         setSelectedImage(null); 
+        toast.success("Profile image updated successfully!", { position: "top-right" });
       } else {
-        console.error("Failed to update profile image");
+        toast.error("Failed to update profile image. Please try again.", { position: "top-right" });
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -146,6 +154,8 @@ const Profile = () => {
         </div>
       </div>
       <Footer />
+    <ToastContainer />
+      
     </>
   );
 };
