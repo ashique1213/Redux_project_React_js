@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['GET'])
 def UserListView(request):
-        users = CustomUser.objects.all()
+        users = CustomUser.objects.filter(is_staff=False)
         user_list = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
         return Response({"user_list": user_list}, status=status.HTTP_200_OK)  
 
@@ -49,6 +49,28 @@ def AdminDeleteUserView(request, user_id):
         user = CustomUser.objects.get(id=user_id)
         user.delete()
         return Response({"message": "User deleted successfully"}, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def AdminEditUserView(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+
+        if request.method == 'GET':
+            return Response({"id": user.id, "username": user.username, "email": user.email})
+
+        if request.method == 'PUT':
+            user.username = request.data.get("username", user.username)
+            user.email = request.data.get("email", user.email)
+            user.save()
+            return Response({"message": "User updated successfully"}, status=status.HTTP_200_OK)
+
     except CustomUser.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:

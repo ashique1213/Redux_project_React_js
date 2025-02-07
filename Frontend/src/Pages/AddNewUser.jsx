@@ -44,7 +44,7 @@ const AddNewUser = () => {
       });
       setSuccess(response.data.message);
       setFormData({ username: "", email: "", password: "", password2: "" });
-      navigate("/adminhome");  // Example: redirect to user list
+      navigate("/adminhome");
     } catch (error) {
       setError(error.response?.data?.error || "An error occurred");
     }
@@ -54,7 +54,7 @@ const AddNewUser = () => {
   return (
     <>
     <Navbar />
-    <div className="flex justify-center items-center p-8 bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen  bg-gray-100">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-xl">
         <h2 className="text-xl font-semibold text-center mb-4">
           Add New User

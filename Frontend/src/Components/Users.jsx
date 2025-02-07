@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const Users = ({ userData }) => {
+  const navigate = useNavigate();
 
   const handleDelete = async (userId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
@@ -53,9 +56,12 @@ const Users = ({ userData }) => {
                   <td className="p-2">{user.username}</td>
                   <td className="p-2">{user.email}</td>
                   <td className="p-2">
-                    <button className="bg-blue-950 text-white px-3 py-1 rounded">
-                      Edit
-                    </button>
+                    <button
+                        onClick={() => navigate(`/edituser/${user.id}`)}
+                        className="bg-blue-950 text-white px-3 py-1 rounded"
+                      >
+                        Edit
+                      </button>
                   </td>
                   <td className="p-2">
                     <button onClick={() => handleDelete(user.id)} className="bg-red-900 text-white px-3 py-1 rounded">

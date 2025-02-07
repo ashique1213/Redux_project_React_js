@@ -9,6 +9,7 @@ import Login from './Pages/Login';
 import SignUp from './Pages/Signup';
 import AdminHome from './Pages/AdminHome';
 import AddNewUser from './Pages/AddNewUser';
+import EditUser from './Pages/EditUser';
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/adminhome" element={<AdminHome />} />
             <Route path="/addnewuser" element={<AddNewUser />} />
+            <Route path="/edituser/:userId" element={<EditUser />} />
           </Routes>
         </Router>
       </PersistGate>
