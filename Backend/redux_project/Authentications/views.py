@@ -1,12 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
 from .models import CustomUser 
 from .serializer import UserSignupSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 import re
-from datetime import timedelta
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from django.shortcuts import get_object_or_404
+
 
 
 def get_access_token_for_user(user):
@@ -85,3 +87,35 @@ def UserLoginView(request):
         "user": user_data,
         "is_admin": user.is_staff
     }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def UserProfile(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        return Response({
+            "username": user.username,
+            "email": user.email,
+            "profile_image": user.profile_image.url if user.profile_image else None
+        })
+    except CustomUser.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  
+def UpdateProfile(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.user != user:
+        return Response({"error": "You can only update your own profile"}, status=403)
+
+    if "profile_image" in request.FILES:
+        user.profile_image = request.FILES["profile_image"]
+        user.save()
+        return Response({"profile_image": user.profile_image.url}, status=200)
+
+    return Response({"error": "No image provided"}, status=400)
+
