@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.env
+*.venv
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+*.json
+*.csv
+
+# Secrets and environment files
+.env
+*.pem
+*.key
+*.crt
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Django & Flask specific
+instance/
+media/
+staticfiles/
+local_settings.py
+
+# VS Code & IDE settings
+.vscode/
+.idea/
+*.swp
