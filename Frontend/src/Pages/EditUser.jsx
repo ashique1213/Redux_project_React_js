@@ -40,6 +40,13 @@ const EditUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
+    if (!formData.username.trim()) {
+      toast.error("Username cannot be empty.");
+      return;
+    }
+    
     try {
       const response = await fetch(`http://127.0.0.1:8000/adminside/update/${userId}/`, {
         method: "PUT",
@@ -53,7 +60,7 @@ const EditUser = () => {
       if (response.ok) {
         toast.success("User updated successfully");
         setTimeout(() => {
-          navigate("/adminhome"); // Redirect after 2 seconds
+          navigate("/adminhome"); 
         }, 2000);
       } else {
         const data = await response.json();

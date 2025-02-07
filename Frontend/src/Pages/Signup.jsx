@@ -30,9 +30,43 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    return passwordRegex.test(password);
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const { email, username, password, password2 } = formData;
+
+    if (!formData.username.trim()) {
+          setError("Username is required");
+          toast.error("Username cannot be empty.");
+          return;
+        }
+      
+        if (!formData.email.trim()) {
+          setError("Email is required");
+          toast.error("Email cannot be empty.");
+          return;
+    }
+    
+
+    if (!validatePassword(password)) {
+      setError("Password must be 6+ chars with A-Z, a-z, 0-9, & symbol.");
+      toast.error("Weak password! Use A-Z, a-z, 0-9, & symbols.");
+      return;
+    }
+  
+    if (password !== password2) {
+      setError("Passwords do not match.");
+      toast.error("Passwords do not match.");
+      return;
+    }
 
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/signup/", formData);

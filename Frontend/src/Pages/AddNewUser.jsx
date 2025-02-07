@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddNewUser = () => {
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ const AddNewUser = () => {
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
     if (!isAdmin) {
-      navigate("/"); // Redirect non-admin users
+      navigate("/"); 
     }
   }, [navigate]);
 
@@ -26,13 +28,39 @@ const AddNewUser = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    return passwordRegex.test(password);
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    if (!formData.username.trim()) {
+      setError("Username is required");
+      toast.error("Username cannot be empty.");
+      return;
+    }
   
+    if (!formData.email.trim()) {
+      setError("Email is required");
+      toast.error("Email cannot be empty.");
+      return;
+    }
+  
+    if (!validatePassword(formData.password)) {
+      setError("Password must be 6+ chars with A-Z, a-z, 0-9, & symbol.");
+      toast.error("Weak password! Use A-Z, a-z, 0-9, & symbols.");
+      return;
+    }
+
     if (formData.password !== formData.password2) {
       setError("Passwords do not match");
+      toast.error("Passwords do not match.");
       return;
     }
   
@@ -115,7 +143,8 @@ const AddNewUser = () => {
         </form>
       </div>
     </div>
-    <Footer />
+      <Footer />
+       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
   </>
   
   );
