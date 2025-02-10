@@ -70,11 +70,14 @@ const AddNewUser = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setSuccess(response.data.message);
+      toast.success("User added successfully!");
       setFormData({ username: "", email: "", password: "", password2: "" });
-      navigate("/adminhome");
+      setTimeout(() => {
+        navigate("/adminhome");
+      }, 2000); 
     } catch (error) {
       setError(error.response?.data?.error || "An error occurred");
+      toast.error(error.response?.data?.error || "An error occurred");
     }
   };
   

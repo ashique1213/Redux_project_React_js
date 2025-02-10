@@ -67,7 +67,7 @@ const Users = ({ userData }) => {
               userData.map((user) => (
                 <tr key={user.id} className="border-t font-bold">
                   <td className="p-2">{user.id}</td>
-                  <td className="p-2">{user.username}</td>
+                  <td className="p-2 capitalize">{user.username}</td>
                   <td className="p-2">{user.email}</td>
                   <td className="p-2">
                     <button

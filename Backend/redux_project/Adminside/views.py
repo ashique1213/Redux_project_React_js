@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['GET'])
 def UserListView(request):
-        users = CustomUser.objects.filter(is_staff=False)
+        users = CustomUser.objects.filter(is_staff=False).order_by('-id')
         user_list = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
         return Response({"user_list": user_list}, status=status.HTTP_200_OK)  
 

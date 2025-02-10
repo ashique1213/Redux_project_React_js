@@ -34,7 +34,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { signupSuccess, signupFailure ,signOut } = authSlice.actions;
+export const { signupSuccess, signupFailure ,signOut,adding } = authSlice.actions;
 
 export const signupUser = (username, email, password, password2) => async (dispatch) => {
   try {

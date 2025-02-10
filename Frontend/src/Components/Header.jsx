@@ -1,8 +1,8 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
-  const {userName, userEmail} = useSelector((state) => state.auth)
+  const { userName, userEmail} = useSelector((state) => state.auth)
     return (
       <div className="relative flex items-center justify-center h-[80vh] bg-[#0A1931]">
         <div className="absolute inset-0 flex items-center justify-center">
@@ -15,7 +15,6 @@ const Header = () => {
           <p className="mt-4 text-lg md:text-xl text-gray-300 font-medium capitalize">
             {userName ? `Welcome ${userName}` : ' '}
           </p>
-
         </div>
       </div>
     );
